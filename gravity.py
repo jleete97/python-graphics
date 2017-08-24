@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, math
 from pygame.locals import *
 from rotate import rotate, offsetRotate
 
@@ -7,6 +7,7 @@ WINDOW_HEIGHT = 900
 SUN_RADIUS = 30
 SUN_POS = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
 GRAVITY_CONSTANT = 30.0
+TOO_CLOSE = SUN_RADIUS * 2
 
 PLAYER_WIDTH = 10
 PLAYER_LENGTH = PLAYER_WIDTH + PLAYER_WIDTH // 2
@@ -36,9 +37,13 @@ direction = 0
 motion = (0, 0)
 color = 0
 thrust = 0
+exploded = False
 
 while True:
     # Handle events: rotation, thrust, color change, quit
+
+    if exploded:
+        continue
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -73,6 +78,8 @@ while True:
     # Increment position; wrap around as needed
     pos = ((pos[0] + motion[0]) % WINDOW_WIDTH, (pos[1] + motion[1]) % WINDOW_HEIGHT)
 
+    distanceFromSun = math.sqrt((pos[0]-SUN_POS[0]) ** 2 + (pos[1]-SUN_POS[1]) ** 2)
+
     # Draw
 
     # Background
@@ -95,6 +102,10 @@ while True:
         pygame.draw.polygon(surface,
                             RED,
                             (flametip, flamers, flamels))
+
+    if distanceFromSun <= TOO_CLOSE:
+        pygame.draw.circle(surface, RED, ((int(pos[0]), int(pos[1]))), SUN_RADIUS // 2)
+        exploded = True
 
     pygame.display.update()
     mainClock.tick(40)
