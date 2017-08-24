@@ -12,5 +12,9 @@ for deg in range(360):
 
 def rotate(p, deg):
     rm = rotationMatrices[deg]
-    return [p[0] * rm[0][0] + p[1] * rm[0][1],
-            p[0] * rm[1][0] + p[1] * rm[1][1]]
+    return (p[0] * rm[0][0] + p[1] * rm[0][1],
+            p[0] * rm[1][0] + p[1] * rm[1][1])
+
+def offsetRotate(center, p, deg):
+    rot = rotate(p, deg)
+    return (center[0] + rot[0], center[1] + rot[1])
