@@ -48,7 +48,7 @@ while True:
             if event.key == K_UP:
                 thrust = 1
         elif event.type == KEYUP:
-            if event.key == K_ESCAPE:
+            if event.key == K_ESCAPE or event.key == ord('q'):
                 pygame.quit()
                 sys.exit()
             elif event.key == K_LEFT:
