@@ -12,6 +12,8 @@ SUN_RADIUS = 30
 SUN_POS = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
 GRAVITY_CONSTANT = 30.0
 TOO_CLOSE = SUN_RADIUS * 2
+EXPLOSION_START = 10
+EXPLOSION_LIMIT = 40
 
 # Player ship parameters
 PLAYER_WIDTH = 10
@@ -20,6 +22,7 @@ PLAYER_LENGTH = PLAYER_WIDTH + PLAYER_WIDTH // 2
 # Colors used in game
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+ORANGE = (255, 224, 0)
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
 YELLOW = (255, 255, 0)
@@ -29,8 +32,9 @@ WHITE = (255, 255, 255)
 GREY = (192, 192, 192)
 DARKGREY = (128, 128, 128)
 
-# Player can be any color except color of background, flame, or sun
-PLAYER_COLORS = [BLACK, BLUE, GREEN, PURPLE, TURQUOISE, WHITE, GREY]
+# Player can be any color except color of background, flame, sun,
+# or black (until they explode, when they stay black)
+PLAYER_COLORS = [BLUE, GREEN, PURPLE, TURQUOISE, WHITE, GREY]
 
 # Initialize
 pygame.init()
@@ -38,22 +42,26 @@ mainClock = pygame.time.Clock()
 surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
 pygame.display.set_caption("Gravity")
 
-# Player position (start well away from sun)
-pos = (WINDOW_WIDTH // 20, WINDOW_HEIGHT // 10)
-# Direction, in degrees from straight down
-direction = 0
-# Motion vector
-motion = (0, 0)
-# Color index in PLAYER_COLORS
-color = 0
-# Thrust level
-thrust = 0
-# Have we exploded?
-exploded = False
-# Rotation direction
-rotation = 0
-# Diameter of explosion; not used until you explode
-explosionDiameter = 10
+def initShip():
+    global pos, direction, motion, color, thrust, exploded, rotation, explosionDiameter
+    # Player position (start well away from sun)
+    pos = (WINDOW_WIDTH // 20, WINDOW_HEIGHT // 10)
+    # Direction, in degrees from straight down
+    direction = 0
+    # Motion vector
+    motion = (0, 0)
+    # Color index in PLAYER_COLORS
+    color = 0
+    # Thrust level
+    thrust = 0
+    # Have we exploded?
+    exploded = False
+    # Rotation direction
+    rotation = 0
+    # Diameter of explosion; not used until you explode
+    explosionDiameter = 10
+
+initShip()
 
 # Main event loop
 while True:
@@ -61,7 +69,7 @@ while True:
     # Handle events: rotation, thrust, color change, quit
 
     if exploded:
-        # Exploded: handle quit events only
+        # Exploded: handle quit, reset events only
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -70,6 +78,8 @@ while True:
                 if event.key == K_ESCAPE or event.key == ord('q'):
                     pygame.quit()
                     sys.exit()
+                elif event.key == ord('r'):
+                    initShip()
     else:
         # Still alive - handle all events.
         for event in pygame.event.get():
@@ -122,12 +132,13 @@ while True:
     # Player's ship
     offsetl = PLAYER_WIDTH * 2
     offsetw = PLAYER_WIDTH
-    tip = offsetRotate(pos, (0, offsetl), direction)
-    ls = offsetRotate(pos, (offsetw, -offsetl), direction)
-    rs = offsetRotate(pos, (-offsetw, -offsetl), direction)
+    front = offsetRotate(pos, (0, offsetl), direction)
+    leftShoulder = offsetRotate(pos, (offsetw, -offsetl), direction)
+    rightShoulder = offsetRotate(pos, (-offsetw, -offsetl), direction)
+    shipColor = BLACK if exploded else PLAYER_COLORS[color]
     pygame.draw.polygon(surface,
-                        PLAYER_COLORS[color],
-                        (tip, rs, ls))
+                        shipColor,
+                        (front, rightShoulder, leftShoulder))
     if (thrust > 0):
         flametip = offsetRotate(pos, (0, - offsetl * 2), direction)
         flamels = offsetRotate(pos, (offsetw // 2, -offsetl), direction)
@@ -137,11 +148,14 @@ while True:
                             (flametip, flamers, flamels))
 
     # Did we pull an Icarus?
-    if distanceFromSun <= TOO_CLOSE or exploded:
-        pygame.draw.circle(surface, RED, ((int(pos[0]), int(pos[1]))), explosionDiameter)
+    if distanceFromSun <= TOO_CLOSE:
         exploded = True
-        explosionDiameter += 1
         thrust = 0
+
+    if exploded and explosionDiameter <= EXPLOSION_LIMIT:
+        explosionColor = RED if explosionDiameter < EXPLOSION_LIMIT - 5 else ORANGE
+        pygame.draw.circle(surface, explosionColor, ((int(pos[0]), int(pos[1]))), explosionDiameter)
+        explosionDiameter += 1
 
     pygame.display.update()
     mainClock.tick(80)

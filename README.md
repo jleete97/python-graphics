@@ -18,4 +18,4 @@ and you explode if you get too close.
 * Up arrow thrusts forward.
 * 'C' changes color.
 * ESC exits.
-
+* 'R' resets after an explosion.
