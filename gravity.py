@@ -50,6 +50,8 @@ color = 0
 thrust = 0
 # Have we exploded?
 exploded = False
+# Rotation direction
+rotation = 0
 
 # Main event loop
 while True:
@@ -66,20 +68,25 @@ while True:
         elif event.type == KEYDOWN:
             if event.key == K_UP:
                 thrust = 1
+            elif event.key == K_LEFT:
+                rotation = -10
+            elif event.key == K_RIGHT:
+                rotation = 10
         elif event.type == KEYUP:
             if event.key == K_ESCAPE or event.key == ord('q'):
                 pygame.quit()
                 sys.exit()
-            elif event.key == K_LEFT:
-                direction = (direction - 10) % 360
-            elif event.key == K_RIGHT:
-                direction = (direction + 10) % 360
+            elif event.key == K_LEFT or event.key == K_RIGHT:
+                rotation = 0
             elif event.key == K_UP:
                 thrust = 0
             elif event.key == ord('c'):
                 color = (color + 1) % len(PLAYER_COLORS)
 
     # Calculate motion and position changes
+
+    # Add rotation to direction the ship is facing
+    direction = (direction + rotation) % 360
 
     # Add result of thrust to motion
     motion = offsetRotate(motion, (0, thrust), direction)
