@@ -52,36 +52,47 @@ thrust = 0
 exploded = False
 # Rotation direction
 rotation = 0
+# Diameter of explosion; not used until you explode
+explosionDiameter = 10
 
 # Main event loop
 while True:
 
-    if exploded:
-        continue
-
     # Handle events: rotation, thrust, color change, quit
 
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == KEYDOWN:
-            if event.key == K_UP:
-                thrust = 1
-            elif event.key == K_LEFT:
-                rotation = -10
-            elif event.key == K_RIGHT:
-                rotation = 10
-        elif event.type == KEYUP:
-            if event.key == K_ESCAPE or event.key == ord('q'):
+    if exploded:
+        # Exploded: handle quit events only
+        for event in pygame.event.get():
+            if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.key == K_LEFT or event.key == K_RIGHT:
-                rotation = 0
-            elif event.key == K_UP:
-                thrust = 0
-            elif event.key == ord('c'):
-                color = (color + 1) % len(PLAYER_COLORS)
+            elif event.type == KEYUP:
+                if event.key == K_ESCAPE or event.key == ord('q'):
+                    pygame.quit()
+                    sys.exit()
+    else:
+        # Still alive - handle all events.
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_UP:
+                    thrust = 1
+                elif event.key == K_LEFT:
+                    rotation = -10
+                elif event.key == K_RIGHT:
+                    rotation = 10
+            elif event.type == KEYUP:
+                if event.key == K_ESCAPE or event.key == ord('q'):
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == K_LEFT or event.key == K_RIGHT:
+                    rotation = 0
+                elif event.key == K_UP:
+                    thrust = 0
+                elif event.key == ord('c'):
+                    color = (color + 1) % len(PLAYER_COLORS)
 
     # Calculate motion and position changes
 
@@ -126,9 +137,11 @@ while True:
                             (flametip, flamers, flamels))
 
     # Did we pull an Icarus?
-    if distanceFromSun <= TOO_CLOSE:
-        pygame.draw.circle(surface, RED, ((int(pos[0]), int(pos[1]))), SUN_RADIUS // 2)
+    if distanceFromSun <= TOO_CLOSE or exploded:
+        pygame.draw.circle(surface, RED, ((int(pos[0]), int(pos[1]))), explosionDiameter)
         exploded = True
+        explosionDiameter += 1
+        thrust = 0
 
     pygame.display.update()
-    mainClock.tick(40)
+    mainClock.tick(80)
