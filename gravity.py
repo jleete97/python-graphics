@@ -2,21 +2,22 @@ import pygame, sys, random, math
 from pygame.locals import *
 from rotate import rotate, offsetRotate
 
+# Constants
+
+# Window parameters
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 900
+# Sun parameters
 SUN_RADIUS = 30
 SUN_POS = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
 GRAVITY_CONSTANT = 30.0
 TOO_CLOSE = SUN_RADIUS * 2
 
+# Player ship parameters
 PLAYER_WIDTH = 10
 PLAYER_LENGTH = PLAYER_WIDTH + PLAYER_WIDTH // 2
 
-pygame.init()
-mainClock = pygame.time.Clock()
-surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
-pygame.display.set_caption("Gravity")
-
+# Colors used in game
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -31,19 +32,32 @@ DARKGREY = (128, 128, 128)
 # Player can be any color except color of background, flame, or sun
 PLAYER_COLORS = [BLACK, BLUE, GREEN, PURPLE, TURQUOISE, WHITE, GREY]
 
-# Start player directly above sun
+# Initialize
+pygame.init()
+mainClock = pygame.time.Clock()
+surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
+pygame.display.set_caption("Gravity")
+
+# Player position (start well away from sun)
 pos = (WINDOW_WIDTH // 20, WINDOW_HEIGHT // 10)
+# Direction, in degrees from straight down
 direction = 0
+# Motion vector
 motion = (0, 0)
+# Color index in PLAYER_COLORS
 color = 0
+# Thrust level
 thrust = 0
+# Have we exploded?
 exploded = False
 
+# Main event loop
 while True:
-    # Handle events: rotation, thrust, color change, quit
 
     if exploded:
         continue
+
+    # Handle events: rotation, thrust, color change, quit
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -65,7 +79,7 @@ while True:
             elif event.key == ord('c'):
                 color = (color + 1) % len(PLAYER_COLORS)
 
-    # Calculation motion and position changes
+    # Calculate motion and position changes
 
     # Add result of thrust to motion
     motion = offsetRotate(motion, (0, thrust), direction)
@@ -78,6 +92,7 @@ while True:
     # Increment position; wrap around as needed
     pos = ((pos[0] + motion[0]) % WINDOW_WIDTH, (pos[1] + motion[1]) % WINDOW_HEIGHT)
 
+    # Determine distance from sun for later comparison to TOO_CLOSE, to set exploded flag
     distanceFromSun = math.sqrt((pos[0]-SUN_POS[0]) ** 2 + (pos[1]-SUN_POS[1]) ** 2)
 
     # Draw
@@ -103,6 +118,7 @@ while True:
                             RED,
                             (flametip, flamers, flamels))
 
+    # Did we pull an Icarus?
     if distanceFromSun <= TOO_CLOSE:
         pygame.draw.circle(surface, RED, ((int(pos[0]), int(pos[1]))), SUN_RADIUS // 2)
         exploded = True
