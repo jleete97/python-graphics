@@ -42,7 +42,6 @@ drawer = ReversiBoardDrawer(board,
                             sides, colors)
 
 while True:
-    playerIndex = 0 # for quick testing
     opponentIndex = playerIndex - 1
 
     player = sides[playerIndex]
@@ -59,5 +58,6 @@ while True:
     else:
         move = getComputerMove(board)
 
-    moveResult = board.apply(move, player, opponent)
+    moveResult = board.resultOfMove(move, player, opponent)
+    board.apply(moveResult, player)
     drawer.drawMove(move, player)

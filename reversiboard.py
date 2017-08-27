@@ -40,9 +40,9 @@ class ReversiBoard(object):
         self.squares[midHigh][midLow] = self.sides[1]
 
 
-    # Apply a move to this board, and return the results as a list
-    # of 2-tuples indicating squares flipped.
-    def apply(self, move, player, opponent):
+    # Determine the squares flipped by a particular move.
+    # Does not actually apply the move in question.
+    def resultOfMove(self, move, player, opponent):
         self.squares[move[0]][move[1]] = player
         # List of squares that this move flips
         allFlipped = []
@@ -62,10 +62,15 @@ class ReversiBoard(object):
                     allFlipped.append(flipped)
                     flipped = (flipped[0] + dir[0], flipped[1] + dir[1])
 
-        return flipped
+        return allFlipped
 
     def inBounds(self, square):
         return square[0] in range(self.size) and square[0] in range(self.size)
+
+    def apply(self, squares, player):
+        if squares is not None:
+            for square in squares:
+                self.squares[square[0]][square[1]] = player
 
     def copy(self, other):
         other = ReversiBoard(self.size, self.sides)
@@ -144,7 +149,7 @@ class ReversiBoardDrawer(object):
                     pygame.draw.circle(self.surface, color, (cx, cy), self.pieceRadius)
 
     def drawMove(self, move, player):
-        print("hi")
+        self.drawBoard()
         pygame.display.update()
 
     def pointToSquare(self, pos):
