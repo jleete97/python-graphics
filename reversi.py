@@ -61,3 +61,5 @@ while True:
     moveResult = board.resultOfMove(move, player, opponent)
     board.apply(moveResult, player)
     drawer.drawMove(move, player)
+
+    playerIndex = 1 - playerIndex
