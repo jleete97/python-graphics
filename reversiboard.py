@@ -79,6 +79,9 @@ class ReversiBoard(object):
                 self.squares[row][col] = other[row][col]
         return other
 
+    def isEmptyAt(self, square):
+        return self.squares[square[0]][square[1]] is not None
+
 # Fraction of space that gaps take up, vs. total board.
 GAP_FRACTION = 1 / 8
 # Fraction of window's smallest dimension that board takes up.

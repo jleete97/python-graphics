@@ -42,7 +42,7 @@ drawer = ReversiBoardDrawer(board,
                             sides, colors)
 
 while True:
-    opponentIndex = playerIndex - 1
+    opponentIndex = 1 - playerIndex
 
     player = sides[playerIndex]
     opponent = sides[opponentIndex]
@@ -56,7 +56,12 @@ while True:
             pygame.quit()
             sys.exit()
     else:
-        move = getComputerMove(board)
+        move = getComputerMove(board, COMPUTER, HUMAN)
+
+        if move is None:
+            print("I can't find a move. :(")
+            pygame.quit()
+            sys.exit()
 
     moveResult = board.resultOfMove(move, player, opponent)
     board.apply(moveResult, player)

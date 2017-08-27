@@ -1,6 +1,8 @@
 import pygame
+import random
 from pygame.locals import *
 from reversiboard import ReversiBoard
+
 
 def getPlayerMove(drawer):
     move = None
@@ -26,5 +28,46 @@ def getPlayerMove(drawer):
 
     return move
 
-def getComputerMove(board):
+
+def getComputerMove(board, player, opponent):
+#    return constantMove(board)
+#    return randomMove(board)
+    return randomLegalMove1(board, player, opponent)
+
+
+# Pick 5, 5 at ALL times
+def constantMove(board):
     return (5, 5)
+
+
+# Pick ANY square on the board
+def randomMove(board):
+    row = random.randrange(board.size)
+    col = random.randrange(board.size)
+    return (row, col)
+
+
+# Pick a random, but still legal, move
+# By picking a random square, checking
+# it, and moving to the first legal
+# square entry
+def isLegalMove(move, board, player, opponent):
+    return board.isEmptyAt(move) and board.resultOfMove(move, player, opponent) != []
+
+
+def randomLegalMove1(board, player, opponent):
+    for n in range(100):
+        row = random.randrange(board.size)
+        col = random.randrange(board.size)
+        move = (row, col)
+        if isLegalMove(move, board, player, opponent):
+            return (row, col)
+
+    return None
+
+# Pick a random, but still legal, move
+# By checking every square every
+#def randomLegalMove2(board):
+#    for row in range(board.size):
+#        for col in range(board.size):
+
