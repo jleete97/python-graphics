@@ -30,15 +30,11 @@ def getPlayerMove(drawer):
 
 
 def getComputerMove(board, player, opponent):
-#    return constantMove(board)
-#    return randomMove(board)
     return randomLegalMove1(board, player, opponent)
-
 
 # Pick 5, 5 at ALL times
 def constantMove(board):
     return (5, 5)
-
 
 # Pick ANY square on the board
 def randomMove(board):
@@ -46,14 +42,14 @@ def randomMove(board):
     col = random.randrange(board.size)
     return (row, col)
 
-
 # Pick a random, but still legal, move
 # By picking a random square, checking
 # it, and moving to the first legal
 # square entry
 def isLegalMove(move, board, player, opponent):
-    return board.isEmptyAt(move) and board.resultOfMove(move, player, opponent) != []
-
+    return board.isEmptyAt(move) \
+           and board.hasAdjacentSquare(move, opponent) \
+           and board.resultOfMove(move, player, opponent)
 
 def randomLegalMove1(board, player, opponent):
     for n in range(100):
@@ -67,7 +63,17 @@ def randomLegalMove1(board, player, opponent):
 
 # Pick a random, but still legal, move
 # By checking every square every
-#def randomLegalMove2(board):
-#    for row in range(board.size):
-#        for col in range(board.size):
+def randomLegalMove2(board, player, opponent):
+    legalMoves = []
+
+    for row in range(board.size):
+        for col in range(board.size):
+            move = (row, col)
+            if isLegalMove(move, board, player, opponent):
+                legalMoves.append(move)
+
+    if len(legalMoves) == 0:
+        return None
+    else:
+        return legalMoves[random.randrange(len(legalMoves))]
 

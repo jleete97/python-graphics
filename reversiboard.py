@@ -43,6 +43,9 @@ class ReversiBoard(object):
     # Determine the squares flipped by a particular move.
     # Does not actually apply the move in question.
     def resultOfMove(self, move, player, opponent):
+        if move is None:
+            return []
+
         self.squares[move[0]][move[1]] = player
         # List of squares that this move flips
         allFlipped = []
@@ -51,7 +54,7 @@ class ReversiBoard(object):
         for dir in DIRECTIONS:
             # Go until we hit the edge of the board or our own color.
             s = (move[0] + dir[0], move[1] + dir[1])
-            while self.inBounds(s) and self.squares[s[0]][s[1]] == opponent:
+            while self.inBounds(square = s) and self.squares[s[0]][s[1]] == opponent:
                 s = (s[0] + dir[0], s[1] + dir[1])
 
             # If we hit our own color, flip all squares between original move
@@ -64,8 +67,11 @@ class ReversiBoard(object):
 
         return allFlipped
 
-    def inBounds(self, square):
-        return square[0] in range(self.size) and square[0] in range(self.size)
+    def inBounds(self, square = None, row = -1, col = -1):
+        if square is not None:
+            row = square[0]
+            col = square[1]
+        return row in range(self.size) and col in range(self.size)
 
     def apply(self, squares, player):
         if squares is not None:
@@ -80,7 +86,16 @@ class ReversiBoard(object):
         return other
 
     def isEmptyAt(self, square):
-        return self.squares[square[0]][square[1]] is not None
+        return self.squares[square[0]][square[1]] is None
+
+    def hasAdjacentSquare(self, square, player):
+        for dir in DIRECTIONS:
+            row = square[0] + dir[0]
+            col = square[1] + dir[1]
+            if self.inBounds(row = row, col = col) and self.squares[row][col] == player:
+                return True
+
+        return False
 
 # Fraction of space that gaps take up, vs. total board.
 GAP_FRACTION = 1 / 8
@@ -144,7 +159,6 @@ class ReversiBoardDrawer(object):
 
         for row in range(self.board.size):
             for col in range(self.board.size):
-                print("checking " + str(row) + ", " + str(col))
                 if self.board.squares[row][col] is not None:
                     cx = self.left + col * inc + self.gapSize + (self.squareSize // 2)
                     cy = self.top + row * inc + self.gapSize + (self.squareSize // 2)

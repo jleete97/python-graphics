@@ -60,8 +60,6 @@ while True:
 
         if move is None:
             print("I can't find a move. :(")
-            pygame.quit()
-            sys.exit()
 
     moveResult = board.resultOfMove(move, player, opponent)
     board.apply(moveResult, player)
