@@ -97,6 +97,44 @@ class ReversiBoard(object):
 
         return False
 
+    def noLegalMoves(self, player, opponent):
+        for row in range(self.size):
+            for col in range(self.size):
+                move = (row, col)
+                if self.resultOfMove(move, player, opponent) != []:
+                    return False
+        return True
+
+    def isFull(self):
+        for row in range(self.size):
+            for col in range(self.size):
+                if self.squares[row][col] is None:
+                    return False
+        return True
+
+    def determineWinner(self):
+        counts = { }
+
+        for row in range(self.size):
+            for col in range(self.size):
+                squareHolder = self.squares[row][col]
+                if squareHolder is not None:
+                    if not squareHolder in counts.keys():
+                        counts[squareHolder] = 0
+                    counts[squareHolder] = counts[squareHolder] + 1
+
+        winner = None
+
+        for player in counts.keys():
+            if winner is None:
+                winner = player
+            elif counts[player] == counts[winner]:
+                winner = None # logic assumes two players
+            elif counts[player] > counts[winner]:
+                winner = player
+
+        return winner
+
 # Fraction of space that gaps take up, vs. total board.
 GAP_FRACTION = 1 / 8
 # Fraction of window's smallest dimension that board takes up.

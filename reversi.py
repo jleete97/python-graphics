@@ -41,28 +41,46 @@ drawer = ReversiBoardDrawer(board,
                             GREEN,
                             sides, colors)
 
-while True:
-    opponentIndex = 1 - playerIndex
 
-    player = sides[playerIndex]
-    opponent = sides[opponentIndex]
 
-    drawer.drawBoard()
+try:
+    playing = True
+    missedMoves = 0
+    winner = None
 
-    if player == HUMAN:
-        move = getPlayerMove(drawer)
+    while playing:
+        opponentIndex = 1 - playerIndex
+        player = sides[playerIndex]
+        opponent = sides[opponentIndex]
+
+        drawer.drawBoard()
+
+        if board.noLegalMoves(player, opponent):
+            print(player + " has no legal move.")
+            move = None
+            time.sleep(3)
+        elif player == HUMAN:
+            move = getPlayerMove(drawer)
+        else:
+            move = getComputerMove(board, COMPUTER, HUMAN)
 
         if move is None:
-            pygame.quit()
-            sys.exit()
-    else:
-        move = getComputerMove(board, COMPUTER, HUMAN)
+            missedMoves += 1
 
-        if move is None:
-            print("I can't find a move. :(")
+        if missedMoves == 2:
+            winner = board.determineWinner()
 
-    moveResult = board.resultOfMove(move, player, opponent)
-    board.apply(moveResult, player)
-    drawer.drawMove(move, player)
+        moveResult = board.resultOfMove(move, player, opponent)
+        board.apply(moveResult, player)
+        drawer.drawMove(move, player)
 
-    playerIndex = 1 - playerIndex
+        if board.isFull():
+            winner = board.determineWinner()
+            playing = False
+
+        playerIndex = 1 - playerIndex
+
+except PlayerQuitException:
+    pass
+
+print("The winner is the " + winner)

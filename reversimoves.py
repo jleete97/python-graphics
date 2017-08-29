@@ -3,6 +3,9 @@ import random
 from pygame.locals import *
 from reversiboard import ReversiBoard
 
+class PlayerQuitException(BaseException):
+    pass
+
 
 def getPlayerMove(drawer):
     move = None
@@ -24,7 +27,7 @@ def getPlayerMove(drawer):
                     break
 
     if userQuit:
-        move = None
+        raise PlayerQuitException
 
     return move
 
