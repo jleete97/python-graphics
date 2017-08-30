@@ -27,15 +27,15 @@ COMPUTER = 'computer'
 sides = [ HUMAN, COMPUTER ]
 colors = { HUMAN : WHITE , COMPUTER : BLACK }
 
+pygame.init()
+surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
+
 another_game = True
 
 while another_game:
 
     playerIndex = random.randrange(2)
     board = ReversiBoard(BOARD_SIZE, sides)
-
-    pygame.init()
-    surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
 
     drawer = ReversiBoardDrawer(board,
                                 surface,
@@ -45,8 +45,6 @@ while another_game:
                                 DARK_GREEN,
                                 GREEN,
                                 sides, colors)
-
-
 
     try:
         playing = True
@@ -76,18 +74,21 @@ while another_game:
 
             if move is None:
                 missedMoves += 1
+            else:
+                missedMoves = 0
 
             if missedMoves == 2:
                 winner = board.determineWinner()
-
-            board.apply(move, moveResult, player)
-            drawer.drawMove(move, player)
-
-            if board.isFull():
-                winner = board.determineWinner()
                 playing = False
+            else:
+                board.apply(move, moveResult, player)
+                drawer.drawMove(move, player)
 
-            playerIndex = 1 - playerIndex
+                if board.isFull():
+                    winner = board.determineWinner()
+                    playing = False
+
+                playerIndex = 1 - playerIndex
 
     except PlayerQuitException:
         pass
