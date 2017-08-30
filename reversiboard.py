@@ -103,7 +103,7 @@ class ReversiBoard(object):
         for row in range(self.size):
             for col in range(self.size):
                 move = (row, col)
-                if self.resultOfMove(move, player, opponent) != []:
+                if self.isEmptyAt(move) and self.resultOfMove(move, player, opponent) != []:
                     return False
         return True
 
@@ -222,7 +222,6 @@ class ReversiBoardDrawer(object):
             return None
 
         squarePicked = (posInBoard[1] // totalSquareSize, posInBoard[0] // totalSquareSize)
-        print("picked " + str(squarePicked[0]) + ", " + str(squarePicked[1]))
         return squarePicked
 
     def outOfBounds(self, coord):

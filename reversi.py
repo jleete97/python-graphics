@@ -11,6 +11,7 @@ WINDOW_HEIGHT = 900
 # Colors
 DARK_GREEN = (0, 128, 0)
 DARK_GREY = (128, 128, 128)
+LIGHT_RED = (255, 192, 192)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -26,61 +27,97 @@ COMPUTER = 'computer'
 sides = [ HUMAN, COMPUTER ]
 colors = { HUMAN : WHITE , COMPUTER : BLACK }
 
-playerIndex = random.randrange(2)
-board = ReversiBoard(BOARD_SIZE, sides)
+another_game = True
 
-pygame.init()
-surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
+while another_game:
 
-drawer = ReversiBoardDrawer(board,
-                            surface,
-                            WINDOW_WIDTH,
-                            WINDOW_HEIGHT,
-                            DARK_GREY,
-                            DARK_GREEN,
-                            GREEN,
-                            sides, colors)
+    playerIndex = random.randrange(2)
+    board = ReversiBoard(BOARD_SIZE, sides)
+
+    pygame.init()
+    surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
+
+    drawer = ReversiBoardDrawer(board,
+                                surface,
+                                WINDOW_WIDTH,
+                                WINDOW_HEIGHT,
+                                DARK_GREY,
+                                DARK_GREEN,
+                                GREEN,
+                                sides, colors)
 
 
 
-try:
-    playing = True
-    missedMoves = 0
-    winner = None
+    try:
+        playing = True
+        missedMoves = 0
+        winner = None
 
-    while playing:
-        opponentIndex = 1 - playerIndex
-        player = sides[playerIndex]
-        opponent = sides[opponentIndex]
+        while playing:
+            opponentIndex = 1 - playerIndex
+            player = sides[playerIndex]
+            opponent = sides[opponentIndex]
 
-        drawer.drawBoard()
+            drawer.drawBoard()
 
-        if board.noLegalMoves(player, opponent):
-            print(player + " has no legal move.")
-            move = None
-            time.sleep(3)
-        elif player == HUMAN:
-            move = getPlayerMove(drawer)
-        else:
-            move = getComputerMove(board, COMPUTER, HUMAN)
+            moveResult = []
 
-        if move is None:
-            missedMoves += 1
+            if board.noLegalMoves(player, opponent):
+                print(player + " has no legal move.")
+                move = None
+                time.sleep(3)
+            elif player == HUMAN:
+                while moveResult == []:
+                    move = getPlayerMove(drawer)
+                    moveResult = board.resultOfMove(move, player, opponent)
+            else:
+                move = getComputerMove(board, COMPUTER, HUMAN)
+                moveResult = board.resultOfMove(move, player, opponent)
 
-        if missedMoves == 2:
-            winner = board.determineWinner()
+            if move is None:
+                missedMoves += 1
 
-        moveResult = board.resultOfMove(move, player, opponent)
-        board.apply(move, moveResult, player)
-        drawer.drawMove(move, player)
+            if missedMoves == 2:
+                winner = board.determineWinner()
 
-        if board.isFull():
-            winner = board.determineWinner()
-            playing = False
+            board.apply(move, moveResult, player)
+            drawer.drawMove(move, player)
 
-        playerIndex = 1 - playerIndex
+            if board.isFull():
+                winner = board.determineWinner()
+                playing = False
 
-except PlayerQuitException:
-    pass
+            playerIndex = 1 - playerIndex
 
-print("The winner is the " + winner)
+    except PlayerQuitException:
+        pass
+
+    if winner is None:
+        outcome = "The game is a tie."
+    else:
+        outcome = "The " + winner + " wins!"
+
+    fontObj = pygame.font.Font('freesansbold.ttf', 32)
+    textSurface = fontObj.render(outcome, True, LIGHT_RED, DARK_GREY)
+    textRect = textSurface.get_rect()
+    textRect.center = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+
+    surface.blit(textSurface, textRect)
+    pygame.display.update()
+
+    asking_about_another_game = True
+
+    while asking_about_another_game:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                another_game = False
+                asking_about_another_game = False
+                break
+            elif event.type == KEYUP and event.key in [K_ESCAPE, ord('r')]:
+                asking_about_another_game = False
+                break
+
+        pygame.display.update()
+
+pygame.quit()
+sys.exit()
