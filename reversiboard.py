@@ -46,7 +46,7 @@ class ReversiBoard(object):
         if move is None:
             return []
 
-        self.squares[move[0]][move[1]] = player
+#        self.squares[move[0]][move[1]] = player
         # List of squares that this move flips
         allFlipped = []
 
@@ -73,9 +73,11 @@ class ReversiBoard(object):
             col = square[1]
         return row in range(self.size) and col in range(self.size)
 
-    def apply(self, squares, player):
-        if squares is not None:
-            for square in squares:
+    def apply(self, move, moveResult, player):
+        if move is not None:
+            self.squares[move[0]][move[1]] = player
+        if moveResult is not None:
+            for square in moveResult:
                 self.squares[square[0]][square[1]] = player
 
     def copy(self, other):

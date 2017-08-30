@@ -71,7 +71,7 @@ try:
             winner = board.determineWinner()
 
         moveResult = board.resultOfMove(move, player, opponent)
-        board.apply(moveResult, player)
+        board.apply(move, moveResult, player)
         drawer.drawMove(move, player)
 
         if board.isFull():
