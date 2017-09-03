@@ -1,8 +1,10 @@
-import pygame, sys
-from reversiboard import *
-from reversimoves import *
 import random
+import sys
 import time
+
+from reversiboard import *
+
+from games.turns.reversi.reversimoves import *
 
 # Window parameters
 WINDOW_WIDTH = 1200

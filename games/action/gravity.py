@@ -1,6 +1,9 @@
-import pygame, sys, random, math
+import math
+import pygame
+import sys
 from pygame.locals import *
-from rotate import rotate, offsetRotate
+
+from games.action.rotate import offsetRotate
 
 # Constants
 

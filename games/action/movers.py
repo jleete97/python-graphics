@@ -1,7 +1,9 @@
-import pygame, math
-from rotate import rotate, offsetRotate
+import math
+
 import pygame
 from pygame.locals import *
+
+from games.action.rotate import offsetRotate
 
 GRAVITY_CONSTANT = 2.0
 

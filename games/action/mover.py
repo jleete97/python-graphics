@@ -1,6 +1,8 @@
-import pygame, sys, random
+import pygame
+import sys
 from pygame.locals import *
-from rotate import rotate
+
+from games.action.rotate import rotate
 
 WINDOW_WIDTH = 300
 WINDOW_HEIGHT = 200

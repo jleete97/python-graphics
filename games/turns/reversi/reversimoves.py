@@ -1,7 +1,8 @@
-import pygame
 import random
+
+import pygame
 from pygame.locals import *
-from reversiboard import ReversiBoard
+
 
 class PlayerQuitException(BaseException):
     pass
