@@ -28,3 +28,8 @@ just fly on through suns and planets.
 Also, the numerical simulation is chunky enough that things tend to
 get kicked past escape velocity pretty easily. The planet will fly away
 after a couple of minutes.
+
+## reversi.py
+Plays the classic game of "Reversi," where you and the computer
+take turns placing pieces to flip your opponent's back to your
+color. Not quite perfect, but does OK.
