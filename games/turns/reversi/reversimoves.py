@@ -2,6 +2,8 @@ import random
 
 import pygame
 from pygame.locals import *
+import games.turns.reversi.reversiboard
+from games.turns.reversi.reversiboard import ReversiBoard
 
 
 class PlayerQuitException(BaseException):
@@ -34,7 +36,8 @@ def getPlayerMove(drawer):
 
 
 def getComputerMove(board, player, opponent):
-    return randomLegalMove1(board, player, opponent)
+#    return randomLegalMove1(board, player, opponent)
+    return bestScore(board, player, opponent)
 
 # Pick 5, 5 at ALL times
 def constantMove(board):
@@ -81,3 +84,67 @@ def randomLegalMove2(board, player, opponent):
     else:
         return legalMoves[random.randrange(len(legalMoves))]
 
+def bestScore(board, player, opponent):
+    bestMove = None
+    maxScore = -1
+
+    for row in range(board.size):
+        for col in range(board.size):
+            move = (row, col)
+            if isLegalMove(move, board, player, opponent):
+                moveScore = score(board, player, move, opponent)
+                if moveScore > maxScore:
+                    bestMove = move
+                    maxScore = moveScore
+
+    return bestMove
+
+def score(board, player, move, opponent):
+    moveResult = board.resultOfMove(move, player, opponent)
+
+    if not moveResult:
+        return 0
+
+    updatedBoard = ReversiBoard()
+    updatedBoard = board.copy(updatedBoard)
+    updatedBoard.apply(move, moveResult, player)
+    scoreForBoard = scoreBoard(updatedBoard, player, SQUARE_WEIGHTINGS)
+
+def scoreBoard(board, player, wts):
+    totalScore = 0
+
+    for row in range(board.size):
+        for col in range(board.size):
+            if board.squares[row][col] == player:
+                totalScore += wts[row][col]
+
+    return totalScore
+
+def buildSquareWeightings(boardSize):
+    wts = []
+    # Initialize all squares to 1
+    for row in range(boardSize):
+        wts.append([])
+
+        for col in range(boardSize):
+            wts[row].append(1)
+
+    # Set sides
+    SIDE_WEIGHT = 4
+
+    for i in range(boardSize):
+        wts[0][i] = SIDE_WEIGHT
+        wts[boardSize - 1][i] = SIDE_WEIGHT
+        wts[i][0] = SIDE_WEIGHT
+        wts[i][boardSize - 1] = SIDE_WEIGHT
+
+    # Set corners
+    CORNER_WEIGHT = 10
+
+    for row in [0, boardSize - 1]:
+        for col in [0, boardSize - 1]:
+            wts[row][col] = CORNER_WEIGHT
+
+    return wts
+
+SQUARE_WEIGHTINGS = buildSquareWeightings(8)

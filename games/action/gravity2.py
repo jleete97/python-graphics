@@ -72,4 +72,4 @@ while True:
         mover.draw(surface)
 
     pygame.display.update()
-    mainClock.tick(80)
+    mainClock.tick(800)
