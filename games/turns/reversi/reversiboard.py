@@ -17,12 +17,12 @@ DIRECTIONS = buildDirections()
 
 class ReversiBoard(object):
 
-    # 2-D matrix of squares, set to size x size in constructor.
-    squares = []
-
     def __init__(self, size, sides):
         self.size = size
         self.sides = sides
+
+        # 2-D matrix of squares, set to size x size in constructor.
+        self.squares = []
 
         # Fill out entire board with None.
         for row in range(self.size):
@@ -83,9 +83,12 @@ class ReversiBoard(object):
     @staticmethod
     def copy(src):
         other = ReversiBoard(src.size, src.sides)
+        other.squares = []
         for row in range(src.size):
+            other.squares.append([])
             for col in range(src.size):
-                other.squares[row][col] = src.squares[row][col]
+                other.squares[row].append(src.squares[row][col])
+#                other.squares[row][col] = src.squares[row][col]
         return other
 
     def isEmptyAt(self, square):

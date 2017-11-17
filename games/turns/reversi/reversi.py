@@ -76,6 +76,7 @@ while another_game:
                 else:
                     move = getComputerMove(board, COMPUTER, HUMAN)
                     moveResult = board.resultOfMove(move, player, opponent)
+                    print(" move result: " + str(moveResult))
 
             displayMove = None
 
