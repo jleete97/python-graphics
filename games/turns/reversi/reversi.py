@@ -66,13 +66,23 @@ while another_game:
                 print(player + " has no legal move.")
                 move = None
                 time.sleep(3)
-            elif player == HUMAN:
-                while moveResult == []:
-                    move = getPlayerMove(drawer)
-                    moveResult = board.resultOfMove(move, player, opponent)
             else:
-                move = getComputerMove(board, COMPUTER, HUMAN)
-                moveResult = board.resultOfMove(move, player, opponent)
+                print(player + " is moving...")
+
+                if player == HUMAN:
+                    while moveResult == []:
+                        move = getPlayerMove(drawer)
+                        moveResult = board.resultOfMove(move, player, opponent)
+                else:
+                    move = getComputerMove(board, COMPUTER, HUMAN)
+                    moveResult = board.resultOfMove(move, player, opponent)
+
+            displayMove = None
+
+            if (move is not None):
+                displayMove = (move[0] + 1, move[1] + 1);
+
+            print(player + " has moved: " + str(displayMove))
 
             if move is None:
                 missedMoves += 1
