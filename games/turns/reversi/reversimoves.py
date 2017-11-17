@@ -99,16 +99,19 @@ def bestScore(board, player, opponent):
 
     return bestMove
 
+# Determine the score for applying the move to the board,
+# for the player. Does not alter the passed-in board.
 def score(board, player, move, opponent):
     moveResult = board.resultOfMove(move, player, opponent)
 
     if not moveResult:
         return 0
 
-    updatedBoard = ReversiBoard()
-    updatedBoard = board.copy(updatedBoard)
+    updatedBoard = ReversiBoard.copy(board)
     updatedBoard.apply(move, moveResult, player)
     scoreForBoard = scoreBoard(updatedBoard, player, SQUARE_WEIGHTINGS)
+
+    return scoreForBoard
 
 def scoreBoard(board, player, wts):
     totalScore = 0

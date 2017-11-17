@@ -80,11 +80,12 @@ class ReversiBoard(object):
             for square in moveResult:
                 self.squares[square[0]][square[1]] = player
 
-    def copy(self, other):
-        other = ReversiBoard(self.size, self.sides)
-        for row in range(self.size):
-            for col in range(self.size):
-                self.squares[row][col] = other[row][col]
+    @staticmethod
+    def copy(src):
+        other = ReversiBoard(src.size, src.sides)
+        for row in range(src.size):
+            for col in range(src.size):
+                other.squares[row][col] = src.squares[row][col]
         return other
 
     def isEmptyAt(self, square):

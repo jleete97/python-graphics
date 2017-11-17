@@ -7,8 +7,8 @@ from reversiboard import *
 from games.turns.reversi.reversimoves import *
 
 # Window parameters
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 900
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 700
 
 # Colors
 DARK_GREEN = (0, 128, 0)
